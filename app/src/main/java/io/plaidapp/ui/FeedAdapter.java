@@ -211,7 +211,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     public void onClick(View v) {
                         final Story story = (Story) getItem(holder.getAdapterPosition());
                         CustomTabActivityHelper.openCustomTab(host,
-                                DesignerNewsStory.getCustomTabIntent(host, story, null).build(),
+                                DesignerNewsStory.Companion.getCustomTabIntent(host, story, null).build(),
                                 Uri.parse(story.url));
                     }
                 }
@@ -221,7 +221,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             public void onClick(View commentsView) {
                 final Intent intent = new Intent();
                 intent.setClass(host, DesignerNewsStory.class);
-                intent.putExtra(DesignerNewsStory.EXTRA_STORY,
+                intent.putExtra(DesignerNewsStory.Companion.getEXTRA_STORY(),
                         (Story) getItem(holder.getAdapterPosition()));
                 ReflowText.addExtras(intent, new ReflowText.ReflowableTextView(holder.title));
                 setGridItemContentTransitions(holder.itemView);
