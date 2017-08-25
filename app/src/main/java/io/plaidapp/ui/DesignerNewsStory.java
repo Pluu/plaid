@@ -593,8 +593,8 @@ public class DesignerNewsStory extends Activity {
     private void unnestComments(List<Comment> nested, List<Comment> flat) {
         for (Comment comment : nested) {
             flat.add(comment);
-            if (comment.comments != null && comment.comments.size() > 0) {
-                unnestComments(comment.comments, flat);
+            if (comment.getComments() != null && comment.getComments().size() > 0) {
+                unnestComments(comment.getComments(), flat);
             }
         }
     }
@@ -722,7 +722,7 @@ public class DesignerNewsStory extends Activity {
             do {
                 commentIndex++;
             } while (commentIndex < comments.size() &&
-                    comments.get(commentIndex).depth >= newComment.depth);
+                    comments.get(commentIndex).getDepth() >= newComment.getDepth());
             comments.add(commentIndex, newComment);
             int adapterPosition = commentIndexToAdapterPosition(commentIndex);
             notifyItemInserted(adapterPosition);
@@ -802,7 +802,7 @@ public class DesignerNewsStory extends Activity {
                         || partialChanges.contains(CommentAnimator.EXPAND_COMMENT))) {
 
                 final Comment comment = getComment(holder.getAdapterPosition());
-                HtmlUtils.parseMarkdownAndSetText(holder.comment, comment.body, markdown,
+                HtmlUtils.parseMarkdownAndSetText(holder.comment, comment.getBody(), markdown,
                         new Bypass.LoadImageCallback() {
                     @Override
                     public void loadImage(String src, ImageLoadingSpan loadingSpan) {
@@ -813,13 +813,13 @@ public class DesignerNewsStory extends Activity {
                                 .into(new ImageSpanTarget(holder.comment, loadingSpan));
                     }
                 });
-                if (comment.user_display_name != null) {
-                    holder.author.setText(comment.user_display_name.toLowerCase());
+                if (comment.getUser_display_name() != null) {
+                    holder.author.setText(comment.getUser_display_name().toLowerCase());
                 }
-                holder.author.setOriginalPoster(isOP(comment.user_id));
-                if (comment.created_at != null) {
+                holder.author.setOriginalPoster(isOP(comment.getUser_id()));
+                if (comment.getCreated_at() != null) {
                     holder.timeAgo.setText(
-                            DateUtils.getRelativeTimeSpanString(comment.created_at.getTime(),
+                            DateUtils.getRelativeTimeSpanString(comment.getCreated_at().getTime(),
                                     System.currentTimeMillis(),
                                     DateUtils.SECOND_IN_MILLIS)
                                     .toString().toLowerCase());
@@ -829,7 +829,7 @@ public class DesignerNewsStory extends Activity {
                 //     .setDepth(comment.depth);
 
                 holder.threadDepth.setImageDrawable(
-                        new ThreadedCommentDrawable(threadWidth, threadGap, comment.depth));
+                        new ThreadedCommentDrawable(threadWidth, threadGap, comment.getDepth()));
             }
 
             // set/clear expanded comment state
@@ -862,7 +862,7 @@ public class DesignerNewsStory extends Activity {
                         Comment comment = getComment(holder.getAdapterPosition());
                         if (!holder.commentVotes.isActivated()) {
                             final Call<Comment> upvoteComment =
-                                    designerNewsPrefs.getApi().upvoteComment(comment.id);
+                                    designerNewsPrefs.getApi().upvoteComment(comment.getId());
                             upvoteComment.enqueue(new Callback<Comment>() {
                                 @Override
                                 public void onResponse(Call<Comment> call,
@@ -871,14 +871,14 @@ public class DesignerNewsStory extends Activity {
                                 @Override
                                 public void onFailure(Call<Comment> call, Throwable t) { }
                             });
-                            comment.upvoted = true;
-                            comment.vote_count++;
-                            holder.commentVotes.setText(String.valueOf(comment.vote_count));
+                            comment.setUpvoted(true);
+                            comment.setVote_count(comment.getVote_count() + 1);
+                            holder.commentVotes.setText(String.valueOf(comment.getVote_count()));
                             holder.commentVotes.setActivated(true);
                         } else {
-                            comment.upvoted = false;
-                            comment.vote_count--;
-                            holder.commentVotes.setText(String.valueOf(comment.vote_count));
+                            comment.setUpvoted(false);
+                            comment.setVote_count(comment.getVote_count() - 1);
+                            holder.commentVotes.setText(String.valueOf(comment.getVote_count()));
                             holder.commentVotes.setActivated(false);
                             // TODO actually delete upvote
                         }
@@ -900,7 +900,7 @@ public class DesignerNewsStory extends Activity {
 
                         // insert a locally created comment before actually
                         // hitting the API for immediate response
-                        int replyDepth = replyingTo.depth + 1;
+                        int replyDepth = replyingTo.getDepth() + 1;
                         final int newReplyPosition = commentsAdapter.addCommentReply(
                                 new Comment.Builder()
                                         .setBody(holder.commentReply.getText().toString())
@@ -912,7 +912,7 @@ public class DesignerNewsStory extends Activity {
                                         .build(),
                                 inReplyToCommentPosition);
                         final Call<Comment> replyToComment = designerNewsPrefs.getApi()
-                                .replyToComment(replyingTo.id,
+                                .replyToComment(replyingTo.getId(),
                                         holder.commentReply.getText().toString());
                         replyToComment.enqueue(new Callback<Comment>() {
                             @Override
@@ -1007,8 +1007,8 @@ public class DesignerNewsStory extends Activity {
 
         private void bindCommentReply(CommentReplyHolder holder) {
             Comment comment = getComment(holder.getAdapterPosition() - 1);
-            holder.commentVotes.setText(String.valueOf(comment.vote_count));
-            holder.commentVotes.setActivated(comment.upvoted != null && comment.upvoted);
+            holder.commentVotes.setText(String.valueOf(comment.getVote_count()));
+            holder.commentVotes.setActivated(comment.getUpvoted() != null && comment.getUpvoted());
         }
     }
 

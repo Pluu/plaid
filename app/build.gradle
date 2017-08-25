@@ -68,6 +68,10 @@ repositories {
     google()
 }
 
+androidExtensions {
+    experimental = true
+}
+
 dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
     implementation "com.android.support:customtabs:${versions.supportLibrary}"
