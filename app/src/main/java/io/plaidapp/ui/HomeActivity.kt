@@ -67,10 +67,7 @@ import io.plaidapp.ui.recyclerview.GridItemDividerDecoration
 import io.plaidapp.ui.recyclerview.InfiniteScrollListener
 import io.plaidapp.ui.transitions.FabTransform
 import io.plaidapp.ui.transitions.MorphTransform
-import io.plaidapp.util.AnimUtils
-import io.plaidapp.util.DrawableUtils
-import io.plaidapp.util.ViewUtils
-import io.plaidapp.util.showToast
+import io.plaidapp.util.*
 import kotlinx.android.synthetic.main.activity_home.*
 import java.security.InvalidParameterException
 import java.util.*
@@ -80,7 +77,7 @@ class HomeActivity : Activity() {
     private var noConnection: ImageView? = null
     var fabPosting: ImageButton? = null
     private val columns: Int by lazy {
-        resources.getInteger(R.integer.num_columns)
+        getInteger(R.integer.num_columns)
     }
     private val layoutManager: GridLayoutManager by lazy {
         GridLayoutManager(this, columns).apply {
@@ -460,7 +457,7 @@ class HomeActivity : Activity() {
 
     private var postStoryResultReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val fabPosting = this@HomeActivity.fabPosting!!
+            val fabPosting = this@HomeActivity.fabPosting as ImageButton
             ensurePostingProgressInflated()
             when (intent.action) {
                 PostStoryService.BROADCAST_ACTION_SUCCESS -> {
@@ -515,7 +512,7 @@ class HomeActivity : Activity() {
     }
 
     internal fun revealPostingProgress() {
-        val fabPosting = fabPosting!!
+        val fabPosting = fabPosting as ImageButton
 
         ViewAnimationUtils.createCircularReveal(fabPosting,
                 fabPosting.pivotX.toInt(),
@@ -569,7 +566,7 @@ class HomeActivity : Activity() {
     private fun showPostingProgress() {
         ensurePostingProgressInflated()
 
-        val fabPosting = fabPosting!!
+        val fabPosting = fabPosting as ImageButton
         fabPosting.visibility = View.VISIBLE
         // if stub has just been inflated then it will not have been laid out yet
         if (fabPosting.isLaidOut) {

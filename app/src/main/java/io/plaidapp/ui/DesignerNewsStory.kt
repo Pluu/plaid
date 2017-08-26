@@ -50,8 +50,6 @@ import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import android.widget.*
-import butterknife.BindDimen
-import butterknife.BindInt
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bumptech.glide.Glide
@@ -98,12 +96,15 @@ class DesignerNewsStory : Activity() {
     private lateinit var enterComment: EditText
     private lateinit var postComment: ImageButton
 
-    @BindInt(R.integer.fab_expand_duration)
-    var fabExpandDuration: Int = 0
-    @BindDimen(R.dimen.comment_thread_width)
-    var threadWidth: Int = 0
-    @BindDimen(R.dimen.comment_thread_gap)
-    var threadGap: Int = 0
+    private val fabExpandDuration: Int by lazy {
+        getInteger(R.integer.fab_expand_duration)
+    }
+    private val threadWidth: Int by lazy {
+        getDimension(R.dimen.comment_thread_width).toInt()
+    }
+    private val threadGap: Int by lazy {
+        getDimension(R.dimen.comment_thread_gap).toInt()
+    }
 
     private val story: Story by lazy {
         intent.getParcelableExtra<Story>(EXTRA_STORY)
@@ -131,7 +132,6 @@ class DesignerNewsStory : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_designer_news_story)
-        ButterKnife.bind(this)
 
         fab.setOnClickListener(fabClick)
 
